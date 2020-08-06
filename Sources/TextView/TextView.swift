@@ -37,6 +37,7 @@ public struct TextView: View {
 		
 		@Binding private var text: String
 		@Binding private var isEditing: Bool
+        @Binding private var desiredHeight: CGFloat
 		
 		private let textAlignment: TextAlignment
 		private let textHorizontalPadding: CGFloat
@@ -59,6 +60,7 @@ public struct TextView: View {
 		public init(
 			text: Binding<String>,
 			isEditing: Binding<Bool>,
+            desiredHeight : Binding<CGFloat>,
 			textAlignment: TextAlignment,
 			textHorizontalPadding: CGFloat,
 			textVerticalPadding: CGFloat,
@@ -79,6 +81,7 @@ public struct TextView: View {
 		) {
 			_text = text
 			_isEditing = isEditing
+            _desiredHeight = desiredHeight
 			
 			self.textAlignment = textAlignment
 			self.textHorizontalPadding = textHorizontalPadding
@@ -143,11 +146,15 @@ public struct TextView: View {
 				bottom: textVerticalPadding,
 				right: textHorizontalPadding
 			)
-			
+            
+            let fixedWidth = textView.frame.size.width
+            let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+            
 			DispatchQueue.main.async {
 				_ = self.isEditing
 					? textView.becomeFirstResponder()
 					: textView.resignFirstResponder()
+                self.desiredHeight = newSize.height
 			}
 		}
 	}
@@ -162,7 +169,8 @@ public struct TextView: View {
 	
 	@Binding private var text: String
 	@Binding private var isEditing: Bool
-	
+    @Binding private var desiredHeight: CGFloat
+    
 	private let placeholder: String?
 	private let textAlignment: TextAlignment
 	private let textHorizontalPadding: CGFloat
@@ -189,6 +197,7 @@ public struct TextView: View {
 	public init(
 		text: Binding<String>,
 		isEditing: Binding<Bool>,
+        desiredHeight : Binding<CGFloat>,
 		placeholder: String? = nil,
 		textAlignment: TextAlignment = .left,
 		textHorizontalPadding: CGFloat = 0,
@@ -214,6 +223,7 @@ public struct TextView: View {
 	) {
 		_text = text
 		_isEditing = isEditing
+        _desiredHeight = desiredHeight
 		
 		self.placeholder = placeholder
 		self.textAlignment = textAlignment
@@ -247,6 +257,7 @@ public struct TextView: View {
 		.init(
 			text: $text,
 			isEditing: $isEditing,
+            desiredHeight: $desiredHeight,
 			textAlignment: textAlignment,
 			textHorizontalPadding: textHorizontalPadding,
 			textVerticalPadding: textVerticalPadding,
